@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://3dviewer.net/libs/online3dviewer.bundle.js"></script>
+    <style>
+        :root {
+            --bg: #ffffff; --header: #ffffff; --text: #374151; --border: #d1d5db; --toolbar: #f8f8f8;
+        }
+        [data-theme='dark'] {
+            --bg: #121212; --header: #1e1e1e; --text: #e5e7eb; --border: #333333; --toolbar: #252525;
+        }
+        body { 
+            margin: 0; font-family: -apple-system, system-ui, sans-serif; 
+            background: var(--bg); color: var(--text); overflow: hidden; transition: 0.3s; 
+        }
+        header { 
+            height: 50px; background: var(--header); border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px; 
+        }
+        .toolbar { 
+            height: 44px; background: var(--toolbar); border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; padding: 0 15px; gap: 20px; 
+        }
+        #landing { padding: 30px 20px; text-align: center; height: calc(100vh - 94px); overflow-y: auto; }
+        .grid { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; 
+            max-width: 450px; margin: 20px auto; 
+        }
+        .file-btn { 
+            border: 1px solid #2563eb; background: transparent; color: #2563eb; 
+            padding: 12px 0; border-radius: 6px; font-size: 15px; cursor: pointer; 
+        }
+        .theme-toggle { cursor: pointer; font-size: 20px; border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; }
+        #ov_container { width: 100vw; height: calc(100vh - 94px); }
+        .hidden { display: none; }
+        .icon { font-size: 20px; cursor: pointer; color: var(--text); }
+    </style>
+</head>
+<body data-theme="light">
+    <header>
+        <div style="font-weight:600; font-size: 14px; letter-spacing: 0.5px;">ONLINE 3D VIEWER</div>
+        <div style="display:flex; gap:15px; align-items:center;">
+            <span>ℹ️</span><span>❤️</span><span>🐱</span>
+        </div>
+    </header>
+
+    <div class="toolbar">
+        <span class="icon" onclick="document.getElementById('file_input').click()">📁</span>
+        <span class="icon">🔗</span>
+        <div style="flex-grow:1"></div>
+        <div class="theme-toggle" onclick="toggleTheme()" id="theme_icon">☀️</div>
+    </div>
+
+    <input type="file" id="file_input" class="hidden" multiple>
+
+    <div id="landing">
+        <h2 style="font-weight: 400; color: var(--text);">Check an example file:</h2>
+        <div class="grid">
+            <button class="file-btn" onclick="openPicker()">3dm</button>
+            <button class="file-btn" onclick="openPicker()">3ds</button>
+            <button class="file-btn" onclick="openPicker()">3mf</button>
+            <button class="file-btn" onclick="openPicker()">amf</button>
+            <button class="file-btn" onclick="openPicker()">bim</button>
+            <button class="file-btn" onclick="openPicker()">brep</button>
+            <button class="file-btn" onclick="openPicker()">dae</button>
+            <button class="file-btn" onclick="openPicker()">fbx</button>
+            <button class="file-btn" onclick="openPicker()">fcstd</button>
+            <button class="file-btn" onclick="openPicker()">gltf</button>
+            <button class="file-btn" onclick="openPicker()">ifc</button>
+            <button class="file-btn" onclick="openPicker()">iges</button>
+            <button class="file-btn" onclick="openPicker()">step</button>
+            <button class="file-btn" onclick="openPicker()">stl</button>
+            <button class="file-btn" onclick="openPicker()">obj</button>
+        </div>
+    </div>
+
+    <div id="ov_container" class="hidden"></div>
+
+    <script>
+        let viewer = null;
+
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', next);
+            document.getElementById('theme_icon').innerText = next === 'light' ? '☀️' : '🌙';
+            
+            if (viewer) {
+                const bg = next === 'dark' ? [26, 26, 26, 255] : [255, 255, 255, 255];
+                viewer.viewer.SetBackgroundColor(new OV.RGBAColor(...bg));
+            }
+        }
+
+        window.onload = () => {
+            OV.Init3DViewerElements();
+            viewer = new OV.EmbeddedViewer(document.getElementById('ov_container'), {
+                backgroundColor: new OV.RGBAColor(255, 255, 255, 255)
+            });
+        };
+
+        document.getElementById('file_input').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                document.getElementById('landing').classList.add('hidden');
+                document.getElementById('ov_container').classList.remove('hidden');
+                viewer.LoadModelFromFileList(e.target.files);
+            }
+        });
+
+        function openPicker() { document.getElementById('file_input').click(); }
+    </script>
+</body>
+</html>
